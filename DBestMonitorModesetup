@@ -1,0 +1,13 @@
+#!/bin/bash
+## The Best Way to setup your Wifi USB card into Monitor Mode if it's compatible of course, this just takes care of the monitor mode
+## doesent creates magic drivers for hardware. By setting up your card this way I've seen more injection % and packet capturing
+## and analizing is easier. I'll put more details and source of documentation on the README.md
+
+sudo airmon-ng check kill
+sudo ip link set wlan0 down && sudo macchanger -a wlan0 &&
+sudo iw dev wlan0 type monitor control &&
+sudo ip link set wlan0 up
+
+echo "Starting Tests for Injection and Listening Radius Stop the test With Ctrl + C"
+sudo aireplay-ng --test wlan0
+
