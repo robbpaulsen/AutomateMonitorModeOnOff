@@ -1,0 +1,29 @@
+#!/bin/bash
+
+## Clearing terminal to easily visualize any error
+clear
+
+## Setting a variable to for the usb nic name
+wiface="$(basename /sys/class/net/w*)"
+
+## geting nic offline to change macaddress and assign monitor mode
+sudo ip link set "$wiface" down &&
+	sudo iw dev "$wiface" set type managed &&
+	sleep 2 &&
+	sudo macchanger -p "$wiface" &&
+	sleep 1 &&
+	sudo systemctl start --now wpa_supplicant.service NetworkManager.service &&
+	sleep 2 &&
+	sudo ip link set "$wiface" up &&
+
+	## Setting variable to output nic state for user
+	devstat="$(iw dev | grep type)"
+
+## confirming user nic's state for debugging or continue to next steps
+if [[ "$devstat" == "type managed" ]]; then
+	echo -e "\nUSB NIC back in Managed Mode\n"
+else
+	echo -e "\nUSB NIC not managed, rerun command\n"
+fi
+
+#	echo "\n\nUsb NIC back in Managed Mode"

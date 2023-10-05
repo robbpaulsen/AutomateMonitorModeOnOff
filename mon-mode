@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#clear
+
+wiface="$(basename /sys/class/net/wl*)"
+
+sudo systemctl stop wpa_supplicant.service NetworkManager.service &&
+	sleep 2 &&
+	sudo ip link set "$wiface" down &&
+	sudo macchanger -a "$wiface" &&
+	sleep 2 &&
+	sudo iw dev "$wiface" set type monitor &&
+	sleep 2 &&
+	sudo ip link set "$wiface" up &&
+	devstat="$(iw dev | grep type)"
+
+echo -e "\n\n'$wiface $devstat'\n" &&
+	sleep 1
